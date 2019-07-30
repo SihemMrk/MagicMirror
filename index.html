@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Magic Mirror</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <link href="main.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Fira+Code&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Darker+Grotesque&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="test"></div>
+    <div class="up">
+      <div class="date">
+        <h2 id="date"></h2>
+        <h2 id="heure"></h2>
+      </div>
+      <div class="temps">
+        <p id="ville"></p>
+        <div id="icone"></div>
+        <p id="zone_meteo"></p>
+      </div>
+    </div>
+    <div class="bjr">
+      <h1>Bonjour Sihem</h1>
+    </div>
+    <div class="evenements">
+      <h2>Evenements du jour:</h2>
+      <ul>
+        <li>Blabla</li>
+        <li>Bloblo</li>
+      </ul>
+    </div>
+    <script>
+      var d = new Date();
+
+      function hourFunc() {
+        var d = new Date();
+        var hours = d.getHours();
+        var minutes = d.getMinutes();
+        var time = "";
+        time += hours + ":" + minutes;
+        document.getElementById("heure").innerHTML = time;
+        setTimeout(hourFunc, 60000);
+      }
+
+      var day = d.getDate();
+      var month = d.getMonth() + 1;
+      var year = d.getFullYear();
+      var now = "";
+      now += day + "/" + month + "/" + year;
+
+      document.getElementById("date").innerHTML = now;
+      hourFunc();
+      meteo();
+
+      function meteo() {
+        var url =
+          "https://api.openweathermap.org/data/2.5/weather?q=Paris,fr&appid=c21a75b667d6f7abb81f118dcf8d4611&units=metric";
+        $.get(url, callBackGetSuccess);
+      }
+
+      function callBackGetSuccess(data) {
+        var weatherArr = ["Clear", "Cloud", "Rain"];
+
+        var element = document.getElementById("zone_meteo");
+        element.innerHTML = Math.floor(data.main.temp) + "C";
+        var element2 = document.getElementById("ville");
+        element2.innerHTML = data.name;
+
+        var icone = document.getElementById("icone");
+        weatherArr.forEach(function(className) {
+          icone.classList.remove(className);
+        });
+        icone.classList.add(data.weather[0].main);
+      }
+      setTimeout(meteo, 900000);
+    </script>
+  </body>
+</html>
