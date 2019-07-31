@@ -1,4 +1,7 @@
 {
   "name": "helloword",
-  "main": "index.html"
+  "main": "index.js",
+  "dependencies": {
+    "googleapis": "^39.2.0"
+  }
 }
