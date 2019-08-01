@@ -10,6 +10,7 @@ function createWindow() {
   let win = new BrowserWindow({
     width: 800,
     height: 600,
+    fullscreen: true,
     webPreferences: {
       nodeIntegration: true
     }
@@ -88,13 +89,18 @@ function getAccessToken(oAuth2Client, callback) {
  */
 function listEvents(auth) {
   const calendar = google.calendar({ version: "v3", auth });
+  var max = new Date();
+  max.setTime(max.getTime() + 24 * 60 * 60 * 1000);
+  max.setHours(0, 0, 0);
+  console.log(max);
   calendar.events.list(
     {
       calendarId: "primary",
       timeMin: new Date().toISOString(),
       maxResults: 10,
       singleEvents: true,
-      orderBy: "startTime"
+      orderBy: "startTime",
+      timeMax: max.toISOString()
     },
     (err, res) => {
       if (err) return console.log("The API returned an error: " + err);

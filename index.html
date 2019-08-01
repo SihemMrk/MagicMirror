@@ -39,10 +39,7 @@
     </div>
     <div class="evenements">
       <div id="agenda"></div>
-      <ul id="events">
-        <li>Blabla</li>
-        <li>Bloblo</li>
-      </ul>
+      <ul id="events"></ul>
     </div>
     <script>
       const { ipcRenderer } = require("electron");
@@ -132,7 +129,7 @@
               heures +
               "h" +
               minutes +
-              " " +
+              "   " +
               "</span>" +
               "<span class='summaryEvents'>" +
               evenements.summary +
@@ -143,7 +140,11 @@
           .join("");
       });
 
-      ipcRenderer.send("give-me-data");
+      function refreshAgenda() {
+        ipcRenderer.send("give-me-data");
+        setTimeout(refreshAgenda, 5 * 60 * 1000);
+      }
+      refreshAgenda();
     </script>
   </body>
 </html>
