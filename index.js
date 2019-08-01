@@ -1,6 +1,26 @@
 const fs = require("fs");
+const electron = require("electron");
 const readline = require("readline");
 const { google } = require("googleapis");
+const { app, BrowserWindow } = require("electron");
+const { ipcMain } = require("electron");
+
+function createWindow() {
+  // Cree la fenetre du navigateur.
+  let win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+  win.webContents.openDevTools();
+
+  // and load the index.html of the app.
+  win.loadFile("index.html");
+}
+
+app.on("ready", createWindow);
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
@@ -8,13 +28,6 @@ const SCOPES = ["https://www.googleapis.com/auth/calendar.readonly"];
 // created automatically when the authorization flow completes for the first
 // time.
 const TOKEN_PATH = "token.json";
-
-// Load client secrets from a local file.
-fs.readFile("credentials.json", (err, content) => {
-  if (err) return console.log("Error loading client secret file:", err);
-  // Authorize a client with credentials, then call the Google Calendar API.
-  authorize(JSON.parse(content), listEvents);
-});
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -86,15 +99,18 @@ function listEvents(auth) {
     (err, res) => {
       if (err) return console.log("The API returned an error: " + err);
       const events = res.data.items;
-      if (events.length) {
-        console.log("Upcoming 10 events:");
-        events.map((event, i) => {
-          const start = event.start.dateTime || event.start.date;
-          console.log(`${start} - ${event.summary}`);
-        });
-      } else {
-        console.log("No upcoming events found.");
-      }
+      comm.reply("agenda-data-ready", events);
     }
   );
 }
+var comm;
+ipcMain.on("give-me-data", (event, arg) => {
+  comm = event;
+  fs.readFile("credentials.json", (err, content) => {
+    if (err) return console.log("Error loading client secret file:", err);
+    // Authorize a client with credentials, then call the Google Calendar API.
+    authorize(JSON.parse(content), listEvents);
+  });
+});
+
+// document.getElementById("events").innerHTML = comm.summary;

@@ -3,6 +3,7 @@
   <head>
     <title>Magic Mirror</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- <script src="code.js"></script> -->
 
     <link href="main.css" rel="stylesheet" />
     <link
@@ -10,7 +11,11 @@
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css?family=Darker+Grotesque&display=swap"
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Cutive+Mono&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -18,59 +23,85 @@
     <div id="test"></div>
     <div class="up">
       <div class="date">
-        <h2 id="date"></h2>
-        <h2 id="heure"></h2>
+        <div id="heure"></div>
+        <div id="date"></div>
       </div>
       <div class="temps">
-        <p id="ville"></p>
-        <div id="icone"></div>
-        <p id="zone_meteo"></p>
+        <div class="outside">
+          <div id="icone"></div>
+          <div id="zone_meteo"></div>
+        </div>
+        <div id="ville"></div>
       </div>
     </div>
     <div class="bjr">
       <h1>Bonjour Sihem</h1>
     </div>
     <div class="evenements">
-      <h2>Evenements du jour:</h2>
-      <ul>
+      <div id="agenda"></div>
+      <ul id="events">
         <li>Blabla</li>
         <li>Bloblo</li>
       </ul>
     </div>
     <script>
+      const { ipcRenderer } = require("electron");
       var d = new Date();
-
-      function hourFunc() {
+      var jours = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
+      var mois = [
+        "Janvier",
+        "Fevrier",
+        "Mars",
+        "Avril",
+        "Mai",
+        "Juin",
+        "Juillet",
+        "Août",
+        "Septembre",
+        "Octobre",
+        "Novembre",
+        "Decembre"
+      ];
+      function timeFunc() {
         var d = new Date();
         var hours = d.getHours();
+        if (hours < 10) {
+          hours = "0" + hours;
+        }
         var minutes = d.getMinutes();
+        if (minutes < 10) {
+          minutes = "0" + minutes;
+        }
         var time = "";
         time += hours + ":" + minutes;
+        var day = jours[d.getDay()];
+        var date = d.getDate();
+        var minutes = d.getMinutes();
+        var month = mois[d.getMonth()];
+        var year = d.getFullYear();
+        var now = "";
+        now += day + " " + date + " " + month + " " + year;
         document.getElementById("heure").innerHTML = time;
-        setTimeout(hourFunc, 60000);
+        document.getElementById("date").innerHTML = now;
+        setTimeout(timeFunc, 60000);
       }
 
-      var day = d.getDate();
-      var month = d.getMonth() + 1;
-      var year = d.getFullYear();
-      var now = "";
-      now += day + "/" + month + "/" + year;
-
-      document.getElementById("date").innerHTML = now;
-      hourFunc();
+      timeFunc();
       meteo();
 
       function meteo() {
         var url =
           "https://api.openweathermap.org/data/2.5/weather?q=Paris,fr&appid=c21a75b667d6f7abb81f118dcf8d4611&units=metric";
-        $.get(url, callBackGetSuccess);
+        fetch(url).then(function(response) {
+          response.json().then(callBackGetSuccess);
+        });
       }
 
       function callBackGetSuccess(data) {
         var weatherArr = ["Clear", "Clouds", "Rain"];
 
         var element = document.getElementById("zone_meteo");
-        element.innerHTML = Math.floor(data.main.temp) + "C";
+        element.innerHTML = Math.floor(data.main.temp) + "°";
         var element2 = document.getElementById("ville");
         element2.innerHTML = data.name;
 
@@ -81,6 +112,38 @@
         icone.classList.add(data.weather[0].main);
       }
       setTimeout(meteo, 900000);
+
+      ipcRenderer.on("agenda-data-ready", (event, events) => {
+        console.log("mesevenements :", events);
+        document.getElementById("events").innerHTML = events
+          .map(function(evenements) {
+            var dateEvents = new Date(evenements.start.dateTime);
+            var minutes = dateEvents.getMinutes();
+            if (minutes < 10) {
+              minutes = "0" + minutes;
+            }
+            var heures = dateEvents.getHours();
+            if (heures < 10) {
+              heures = "0" + heures;
+            }
+            return (
+              "<li>" +
+              "<span class='dateEvents'>" +
+              heures +
+              "h" +
+              minutes +
+              " " +
+              "</span>" +
+              "<span class='summaryEvents'>" +
+              evenements.summary +
+              "</span>" +
+              "</li>"
+            );
+          })
+          .join("");
+      });
+
+      ipcRenderer.send("give-me-data");
     </script>
   </body>
 </html>

@@ -1,7 +1,13 @@
 {
   "name": "helloword",
   "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
   "dependencies": {
     "googleapis": "^39.2.0"
+  },
+  "devDependencies": {
+    "electron": "^6.0.0"
   }
 }
