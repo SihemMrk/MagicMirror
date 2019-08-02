@@ -41,6 +41,11 @@
       <div id="agenda"></div>
       <ul id="events"></ul>
     </div>
+    <div id="musics"></div>
+    <!-- <audio controls="controls">
+      <source src="Piste audio 13.mp3" type="audio/mp3" />
+      test
+    </audio> -->
     <script>
       const { ipcRenderer } = require("electron");
       var d = new Date();
@@ -145,6 +150,12 @@
         setTimeout(refreshAgenda, 5 * 60 * 1000);
       }
       refreshAgenda();
+
+      ipcRenderer.on("musics-data", (event, musics) => {
+        console.log("mesmusiques:", musics);
+      });
+
+      ipcRenderer.send("wait-for-data");
     </script>
   </body>
 </html>

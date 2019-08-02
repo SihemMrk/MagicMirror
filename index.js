@@ -119,4 +119,21 @@ ipcMain.on("give-me-data", (event, arg) => {
   });
 });
 
-// document.getElementById("events").innerHTML = comm.summary;
+function musicsList() {
+  var path = "/Users/Sihem/projects/MagicMirror/musics";
+
+  fs.readdir(path, function(err, items) {
+    console.log(items);
+
+    for (var i = 0; i < items.length; i++) {
+      const musics = items[i];
+      commBis.reply("music-data", musics);
+      console.log(items[i]);
+    }
+  });
+}
+var commBis;
+ipcMain.on("wait-for-data", (event, arg) => {
+  commBis = event;
+  musicsList();
+});
