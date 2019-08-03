@@ -41,7 +41,10 @@
       <div id="agenda"></div>
       <ul id="events"></ul>
     </div>
-    <div id="musics"></div>
+    <audio src="musics/LONG 01 - 02.mp3" id="audio"></audio>
+    <button id="playbutton" onclick="PlayMusic()"></button>
+
+    <ul id="musics"></ul>
     <!-- <audio controls="controls">
       <source src="Piste audio 13.mp3" type="audio/mp3" />
       test
@@ -151,11 +154,40 @@
       }
       refreshAgenda();
 
-      ipcRenderer.on("musics-data", (event, musics) => {
-        console.log("mesmusiques:", musics);
+      ipcRenderer.on("music-data", (event, items) => {
+        console.log("mesmusiques:", items);
+        document.getElementById("musics").innerHTML = items
+          .map(function(item) {
+            var path = "musics";
+            return "<li>" + path + "/" + item + "</li>";
+          })
+          .join("");
       });
 
       ipcRenderer.send("wait-for-data");
+
+      var audio = document.getElementById("audio");
+      document.getElementById("playbutton").innerHTML = "play";
+      var isPlaying = false;
+
+      function PlayMusic() {
+        if (isPlaying) {
+          audio.pause();
+        } else {
+          audio.play();
+        }
+      }
+      audio.onplaying = function() {
+        isPlaying = true;
+        document.getElementById("playbutton").innerHTML = "pause";
+      };
+      audio.onpause = function() {
+        isPlaying = false;
+        document.getElementById("playbutton").innerHTML = "play";
+      };
+      audio.onended = function() {
+        alert("finished");
+      };
     </script>
   </body>
 </html>

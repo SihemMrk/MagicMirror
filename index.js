@@ -10,7 +10,8 @@ function createWindow() {
   let win = new BrowserWindow({
     width: 800,
     height: 600,
-    fullscreen: true,
+    closable: true,
+    // fullscreen: true,
     webPreferences: {
       nodeIntegration: true
     }
@@ -124,12 +125,7 @@ function musicsList() {
 
   fs.readdir(path, function(err, items) {
     console.log(items);
-
-    for (var i = 0; i < items.length; i++) {
-      const musics = items[i];
-      commBis.reply("music-data", musics);
-      console.log(items[i]);
-    }
+    commBis.reply("music-data", items);
   });
 }
 var commBis;
