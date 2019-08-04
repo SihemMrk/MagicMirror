@@ -122,7 +122,6 @@ ipcMain.on("give-me-data", (event, arg) => {
 
 function musicsList() {
   var path = "/Users/Sihem/projects/MagicMirror/musics";
-
   fs.readdir(path, function(err, items) {
     console.log(items);
     commBis.reply("music-data", items);

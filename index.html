@@ -41,14 +41,25 @@
       <div id="agenda"></div>
       <ul id="events"></ul>
     </div>
-    <audio src="musics/LONG 01 - 02.mp3" id="audio"></audio>
+    <audio id="audio"></audio>
+    <button id="previous" onclick="PreviousMusic()">Previous</button>
     <button id="playbutton" onclick="PlayMusic()"></button>
+    <button id="next" onclick="NextMusic()">Next</button>
+    <input
+      id="volume"
+      type="range"
+      min="0"
+      max="1"
+      step="0.01"
+      onchange="AdjustVolume()"
+    />
+    <button onclick="increasePlaybackRate()">Less</button>
+    <button onclick="decreasePlaybackRate()">More</button>
 
-    <ul id="musics"></ul>
-    <!-- <audio controls="controls">
-      <source src="Piste audio 13.mp3" type="audio/mp3" />
-      test
-    </audio> -->
+    <div id="musicTitle"></div>
+
+    <select id="musics"></select>
+
     <script>
       const { ipcRenderer } = require("electron");
       var d = new Date();
@@ -153,13 +164,20 @@
         setTimeout(refreshAgenda, 5 * 60 * 1000);
       }
       refreshAgenda();
-
+      var list;
+      var currentMusic = 0;
       ipcRenderer.on("music-data", (event, items) => {
+        list = items;
+        console.log(list);
         console.log("mesmusiques:", items);
+        audio.src = "musics/" + items[0];
+        document.getElementById("musicTitle").innerHTML = items[0];
+        audio.play();
+        console.log(audio.src);
         document.getElementById("musics").innerHTML = items
           .map(function(item) {
             var path = "musics";
-            return "<li>" + path + "/" + item + "</li>";
+            return "<li>" + item + "</li>";
           })
           .join("");
       });
@@ -185,9 +203,40 @@
         isPlaying = false;
         document.getElementById("playbutton").innerHTML = "play";
       };
-      audio.onended = function() {
-        alert("finished");
-      };
+
+      audio.onended = NextMusic;
+
+      function NextMusic() {
+        currentMusic++;
+        if (currentMusic === list.length) {
+          currentMusic = 0;
+        }
+        audio.src = "musics/" + list[currentMusic];
+        audio.play();
+        document.getElementById("musicTitle").innerHTML = list[currentMusic];
+      }
+
+      function PreviousMusic() {
+        currentMusic--;
+        if (currentMusic === -1) {
+          currentMusic = list.length - 1;
+        }
+        audio.src = "musics/" + list[currentMusic];
+        audio.play();
+        document.getElementById("musicTitle").innerHTML = list[currentMusic];
+      }
+      function AdjustVolume() {
+        var volume = document.getElementById("volume");
+        audio.volume = volume.value;
+      }
+
+      function increasePlaybackRate() {
+        audio.playbackRate += 0.2;
+      }
+
+      function decreasePlaybackRate() {
+        audio.playbackRate -= 0.2;
+      }
     </script>
   </body>
 </html>
