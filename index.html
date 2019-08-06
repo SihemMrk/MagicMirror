@@ -58,7 +58,7 @@
 
     <div id="musicTitle"></div>
 
-    <select id="musics"></select>
+    <ul id="musics"></ul>
 
     <script>
       const { ipcRenderer } = require("electron");
@@ -174,10 +174,13 @@
         document.getElementById("musicTitle").innerHTML = items[0];
         audio.play();
         console.log(audio.src);
+
+        var incrementation = 0;
         document.getElementById("musics").innerHTML = items
           .map(function(item) {
             var path = "musics";
-            return "<li>" + item + "</li>";
+
+            return "<li id='li_" + incrementation++ + "' >" + item + "</li>";
           })
           .join("");
       });
@@ -207,13 +210,22 @@
       audio.onended = NextMusic;
 
       function NextMusic() {
+        console.log("test1", currentMusic);
         currentMusic++;
+        console.log("test2", currentMusic);
         if (currentMusic === list.length) {
           currentMusic = 0;
         }
         audio.src = "musics/" + list[currentMusic];
         audio.play();
         document.getElementById("musicTitle").innerHTML = list[currentMusic];
+        var musicPlaying = document.getElementById("musicTitle").innerHTML;
+        var currentLi = document.getElementById("li").innerHTML;
+        console.log(musicPlaying);
+        console.log(currentLi);
+        if (musicPlaying === currentLi) {
+          currentLi.style.fontWeight = "bold";
+        }
       }
 
       function PreviousMusic() {
