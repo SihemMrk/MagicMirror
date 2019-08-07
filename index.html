@@ -232,16 +232,11 @@
       audio.onended = NextMusic;
 
       let observer = new IntersectionObserver(function(entries) {
-        console.log(entries);
         entries.forEach(function(entry) {
           if (entry.intersectionRatio > 0.5) {
-            entry.target.setAttribute("isVisible", true);
-            console.log("is visible", entry.target.id);
-            console.log("atribute", entry.isVisible);
+            entry.target.setAttribute("isVisible", "true");
           } else {
-            console.log("is not visible", entry.target.id);
-            entry.target.setAttribute("isVisible", false);
-            console.log("atribute", entry.isVisible);
+            entry.target.setAttribute("isVisible", "false");
           }
         });
       });
@@ -254,8 +249,14 @@
         if (currentMusic === list.length) {
           currentMusic = 0;
         }
+        if (
+          document.getElementById("li_" + currentMusic).isVisible === "false"
+        ) {
+          document.getElementById("list").scrollTop += 40;
+        }
         audio.src = "musics/" + list[currentMusic];
         audio.play();
+
         document.getElementById("musicTitle").innerHTML = list[currentMusic];
       }
 

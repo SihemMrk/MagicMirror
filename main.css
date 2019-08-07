@@ -121,7 +121,6 @@ li {
 }
 #list {
   height: 200px;
-  overflow: scroll;
 }
 li {
   font-family: "Oxygen", sans-serif;
