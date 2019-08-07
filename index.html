@@ -67,8 +67,7 @@
       <button onclick="decreasePlaybackRate()">More</button>
       <div id="list"><ul id="musics"></ul></div>
     </div>
-    <h1>Bonjour Sihem</h1>
-    <h1>Bonjour Sihem</h1>
+
     <script>
       const { ipcRenderer } = require("electron");
       var d = new Date();
@@ -202,6 +201,10 @@
             );
           })
           .join("");
+        let itemsLi = document.querySelectorAll("#musics li");
+        itemsLi.forEach(function(itemLi) {
+          observer.observe(itemLi);
+        });
       });
 
       ipcRenderer.send("wait-for-data");
@@ -230,12 +233,19 @@
 
       let observer = new IntersectionObserver(function(entries) {
         console.log(entries);
-      }, {});
-
-      let items = document.querySelectorAll("h1");
-      items.forEach(function(item) {
-        observer.observe(item);
+        entries.forEach(function(entry) {
+          if (entry.intersectionRatio > 0.5) {
+            entry.target.setAttribute("isVisible", true);
+            console.log("is visible", entry.target.id);
+            console.log("atribute", entry.isVisible);
+          } else {
+            console.log("is not visible", entry.target.id);
+            entry.target.setAttribute("isVisible", false);
+            console.log("atribute", entry.isVisible);
+          }
+        });
       });
+
       function NextMusic() {
         document.getElementById("li_" + currentMusic).style.fontWeight =
           "normal";
