@@ -99,3 +99,32 @@ li {
 .summaryEvents {
   font-size: 26px;
 }
+
+#homePage {
+  display: block;
+}
+
+#audioPlayer {
+  display: none;
+  width: 500px;
+  height: 300px;
+  margin: 0 auto;
+  margin-top: 30px;
+  text-align: center;
+  overflow: scroll;
+}
+
+#musicTitle {
+  font-size: 25px;
+  font-family: "Oxygen", sans-serif;
+  margin-bottom: 10px;
+}
+#list {
+  height: 200px;
+  overflow: scroll;
+}
+li {
+  font-family: "Oxygen", sans-serif;
+  font-size: 20px;
+  line-height: 40px;
+}
