@@ -63,10 +63,11 @@ h1 {
 }
 
 .Rain {
-  background-image: url("pluie.png");
+  background-image: url("rain.png");
   background-repeat: no-repeat;
-  width: 90px;
-  height: 70px;
+  width: 68px;
+  height: 61px;
+  background-size: 70px 70px;
 }
 
 .Clear {
@@ -115,15 +116,36 @@ li {
 }
 
 #musicTitle {
+  display: none;
   font-size: 25px;
   font-family: "Oxygen", sans-serif;
   margin-bottom: 10px;
 }
 #list {
   height: 200px;
+  overflow: auto;
 }
 li {
   font-family: "Oxygen", sans-serif;
   font-size: 20px;
   line-height: 40px;
+}
+
+#pause {
+  display: none;
+  width: 33px;
+  height: 37px;
+}
+
+#play {
+  display: none;
+  width: 35px;
+  height: 41px;
+  margin: 0 auto;
+}
+
+#next,
+#previous {
+  margin: 0 auto;
+  display: none;
 }

@@ -52,6 +52,8 @@
       <div id="musicTitle"></div>
       <audio id="audio"></audio>
       <button id="previous" onclick="PreviousMusic()">Previous</button>
+      <img id="pause" src="pause.png" display="none" />
+      <img id="play" src="play.png" display="none" />
       <button id="playbutton" onclick="PlayMusic()"></button>
       <button id="next" onclick="NextMusic()">Next</button>
 
@@ -63,8 +65,7 @@
         step="0.01"
         onchange="AdjustVolume()"
       />
-      <button onclick="increasePlaybackRate()">Less</button>
-      <button onclick="decreasePlaybackRate()">More</button>
+
       <div id="list"><ul id="musics"></ul></div>
     </div>
 
@@ -216,8 +217,12 @@
       function PlayMusic() {
         if (isPlaying) {
           audio.pause();
+          document.getElementById("pause").style.display = "block";
+          document.getElementById("play").style.display = "none";
         } else {
           audio.play();
+          document.getElementById("play").style.display = "block";
+          document.getElementById("pause").style.display = "none";
         }
       }
       audio.onplaying = function() {
@@ -233,7 +238,7 @@
 
       let observer = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
-          if (entry.intersectionRatio > 0.5) {
+          if (entry.intersectionRatio === 1) {
             entry.target.setAttribute("isVisible", "true");
           } else {
             entry.target.setAttribute("isVisible", "false");
@@ -250,9 +255,16 @@
           currentMusic = 0;
         }
         if (
-          document.getElementById("li_" + currentMusic).isVisible === "false"
+          document
+            .getElementById("li_" + currentMusic)
+            .getAttribute("isVisible") === "false"
         ) {
           document.getElementById("list").scrollTop += 40;
+        }
+        if (currentMusic === list.length - 1) {
+          document.getElementById("list").scrollTop = document.getElementById(
+            "list"
+          ).scrollHeight;
         }
         audio.src = "musics/" + list[currentMusic];
         audio.play();
@@ -264,9 +276,21 @@
         document.getElementById("li_" + currentMusic).style.fontWeight =
           "normal";
         currentMusic--;
-        document.getElementById("li_" + currentMusic).style.fontWeight = "bold";
+
         if (currentMusic === -1) {
           currentMusic = list.length - 1;
+        }
+        document.getElementById("li_" + currentMusic).style.fontWeight = "bold";
+        console.log(document.getElementById("list").scrollHeight);
+        if (
+          document
+            .getElementById("li_" + currentMusic)
+            .getAttribute("isVisible") === "false"
+        ) {
+          document.getElementById("list").scrollTop -= 40;
+        }
+        if (currentMusic === 0) {
+          document.getElementById("list").scrollTop = 0;
         }
         audio.src = "musics/" + list[currentMusic];
         audio.play();
@@ -277,13 +301,6 @@
         audio.volume = volume.value;
       }
 
-      function increasePlaybackRate() {
-        audio.playbackRate += 0.2;
-      }
-
-      function decreasePlaybackRate() {
-        audio.playbackRate -= 0.2;
-      }
       var show = false;
       function changePage() {
         if (show) {
