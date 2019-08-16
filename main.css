@@ -1,8 +1,13 @@
 * {
-  background-color: black;
   color: white;
   font-family: "Open Sans", sans-serif;
   font-weight: 300;
+}
+
+body,
+html {
+  background-color: black;
+  height: 100%;
 }
 
 h1 {
@@ -15,6 +20,7 @@ h1 {
 .up {
   display: flex;
   justify-content: space-between;
+  height: 150px;
 }
 
 .evenements {
@@ -104,16 +110,24 @@ li {
 
 #homePage {
   display: block;
+  height: calc(100% - 150px);
 }
 
 #audioPlayer {
   display: none;
   width: 500px;
-  height: 300px;
   margin: 0 auto;
-  margin-top: 30px;
+
   text-align: center;
   overflow: scroll;
+  height: calc(100% - 150px);
+  background-image: url("play.png");
+  background-repeat: no-repeat;
+  background-position: left center;
+}
+
+#audioPlayer.pause {
+  background-image: url("pause.png");
 }
 
 #musicTitle {
@@ -123,7 +137,6 @@ li {
   margin-bottom: 10px;
 }
 #list {
-  height: 300px;
   overflow: auto;
 }
 li {
@@ -132,22 +145,12 @@ li {
   line-height: 40px;
 }
 
-#pause {
-  display: none;
-  width: 33px;
-  height: 37px;
-  margin: 0 auto;
-}
-
-#play {
-  display: none;
-  width: 35px;
-  height: 41px;
-  margin: 0 auto;
-}
-
 #next,
 #previous {
   margin: 0 auto;
+  display: none;
+}
+
+input {
   display: none;
 }

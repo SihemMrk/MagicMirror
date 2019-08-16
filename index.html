@@ -24,7 +24,6 @@
     />
   </head>
   <body>
-    <div id="test"></div>
     <div class="up">
       <div class="date">
         <div id="heure"></div>
@@ -52,8 +51,6 @@
       <div id="musicTitle"></div>
       <audio id="audio"></audio>
       <button id="previous" onclick="PreviousMusic()">Previous</button>
-      <img id="pause" src="pause.png" display="none" />
-      <img id="play" src="play.png" display="none" />
       <button id="playbutton" onclick="PlayMusic()"></button>
       <button id="next" onclick="NextMusic()">Next</button>
 
@@ -64,6 +61,7 @@
         max="1"
         step="0.01"
         onchange="AdjustVolume()"
+        display="none"
       />
 
       <div id="list"><ul id="musics"></ul></div>
@@ -71,6 +69,15 @@
 
     <script>
       const { ipcRenderer } = require("electron");
+      const os = require("os");
+      function checkPlatform() {
+        if (os.platform() === "darwin") {
+          // console.log(document.getElementsByTagName("button"));
+          document.getElementsByTagName("button")[0].style.display = "block";
+        }
+      }
+
+      checkPlatform();
       var d = new Date();
       var jours = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
       var mois = [
@@ -142,7 +149,7 @@
         console.log("mesevenements :", events);
         if (events.length === 0) {
           return (document.getElementById("events").innerHTML =
-            "Vous n avez pas dévènements de prévu aujourdhui");
+            "Vous n'avez pas d'évènements de prévu aujourd'hui");
         }
         document.getElementById("events").innerHTML = events
           .map(function(evenements) {
@@ -217,12 +224,10 @@
       function PlayMusic() {
         if (isPlaying) {
           audio.pause();
-          document.getElementById("pause").style.display = "block";
-          document.getElementById("play").style.display = "none";
+          document.getElementById("audioPlayer").classList.add("pause");
         } else {
           audio.play();
-          document.getElementById("play").style.display = "block";
-          document.getElementById("pause").style.display = "none";
+          document.getElementById("audioPlayer").classList.remove("pause");
         }
       }
       audio.onplaying = function() {

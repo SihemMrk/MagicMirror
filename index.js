@@ -4,6 +4,7 @@ const readline = require("readline");
 const { google } = require("googleapis");
 const { app, BrowserWindow } = require("electron");
 const { ipcMain } = require("electron");
+const os = require("os");
 
 function createWindow() {
   // Cree la fenetre du navigateur.
