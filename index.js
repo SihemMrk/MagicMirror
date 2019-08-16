@@ -133,3 +133,29 @@ ipcMain.on("wait-for-data", (event, arg) => {
   commBis = event;
   musicsList();
 });
+
+function checkPlatform() {
+  var nodeListButton = document.getElementsByTagName("button").length;
+
+  if (os.platform() === "darwin") {
+    for (var i = 0; i < nodeListButton; i++) {
+      document.getElementsByTagName("button")[i].style.display = "block";
+    }
+  } else {
+    const Gpio = require("onoff").Gpio;
+    const pushButton = new Gpio(17, "in", "both");
+    pushButton.watch(function(err, value) {
+      if (err) {
+        console.error("There was an error", err);
+        return;
+      }
+      console.log(value);
+    });
+    function unexportOnClose() {
+      pushButton.unexport();
+    }
+    process.on(unexportOnClose);
+  }
+}
+
+checkPlatform();
