@@ -122,7 +122,7 @@ ipcMain.on("give-me-data", (event, arg) => {
 });
 
 function musicsList() {
-  var path = "/Users/Sihem/projects/MagicMirror/musics";
+  var path = "musics";
   fs.readdir(path, function(err, items) {
     console.log(items);
     commBis.reply("music-data", items);
@@ -133,17 +133,3 @@ ipcMain.on("wait-for-data", (event, arg) => {
   commBis = event;
   musicsList();
 });
-
-const Gpio = require("onoff").Gpio;
-const pushButton = new Gpio(17, "in", "both");
-pushButton.watch(function(err, value) {
-  if (err) {
-    console.error("There was an error", err);
-    return;
-  }
-  console.log(value);
-});
-function unexportOnClose() {
-  pushButton.unexport();
-}
-process.on(unexportOnClose);

@@ -62,8 +62,6 @@
     <script>
       const { ipcRenderer } = require("electron");
       const os = require("os");
-      // const Gpio = require("onoff").Gpio;
-      // const pushButton = new Gpio(17, "in", "both");
 
       function checkPlatform() {
         var nodeListButton = document.getElementsByTagName("button").length;
@@ -72,21 +70,7 @@
           for (var i = 0; i < nodeListButton; i++) {
             document.getElementsByTagName("button")[i].style.display = "block";
           }
-        // } else {
-        //   const Gpio = require("onoff").Gpio;
-        //   const pushButton = new Gpio(17, "in", "both");
-        //   pushButton.watch(function(err, value) {
-        //     if (err) {
-        //       console.error("There was an error", err);
-        //       return;
-        //     }
-        //     console.log(value);
-        //   });
-        //   function unexportOnClose() {
-        //     pushButton.unexport();
-        //   }
-        //   process.on(unexportOnClose);
-        // }
+        }
       }
 
       checkPlatform();
@@ -234,6 +218,9 @@
       var isPlaying = false;
 
       function PlayMusic() {
+        if (show === false){
+          return;
+          }
         if (isPlaying) {
           audio.pause();
           document.getElementById("audioPlayer").classList.add("pause");
@@ -329,6 +316,42 @@
         }
         show = !show;
       }
-    </script>
+
+      var gpio = require("rpi-gpio");
+      
+      gpio.setMode(gpio.MODE_BCM);
+
+      gpio.on("change", function(channel, value){
+        console.log(channel+" "+value);
+        if(channel === 18 && value){
+          changePage();
+        }
+        else if(channel === 17 && value){
+          PlayMusic()
+        }
+        else if (channel === 27 && value){
+          NextMusic()
+        }
+         else if (channel === 22 && value){
+          PreviousMusic()
+        }
+         else if (channel === 23 && value){
+           if(audio.volume <= 0.9){
+              audio.volume += 0.1
+           }
+        }
+        
+      });
+
+      gpio.setup(18, gpio.DIR_IN, gpio.EDGE_BOTH);
+
+      gpio.setup(17, gpio.DIR_IN, gpio.EDGE_BOTH);
+      
+      gpio.setup(27, gpio.DIR_IN, gpio.EDGE_BOTH);
+      
+      gpio.setup(22, gpio.DIR_IN, gpio.EDGE_BOTH);
+      
+      gpio.setup(23, gpio.DIR_IN, gpio.EDGE_BOTH);
+          </script>
   </body>
 </html>
