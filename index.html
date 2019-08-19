@@ -318,13 +318,17 @@
       }
 
       var gpio = require("rpi-gpio");
+      var rpi_gpio_buttons=require("rpi-gpio-buttons")
+      var button = rpi_gpio_buttons([17], {mode : rpi_gpio_buttons.MODE_BCM})
       
       gpio.setMode(gpio.MODE_BCM);
 
       gpio.on("change", function(channel, value){
         console.log(channel+" "+value);
         if(channel === 18 && value){
-          changePage();
+            if(audio.volume >= 0.1){
+              audio.volume -= 0.1
+           }
         }
         else if(channel === 17 && value){
           PlayMusic()
@@ -342,6 +346,11 @@
         }
         
       });
+      
+      button.on('double_clicked',function(pin){
+        console.log('doubleeee', pin)
+        changePage()
+        })
 
       gpio.setup(18, gpio.DIR_IN, gpio.EDGE_BOTH);
 
