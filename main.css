@@ -23,7 +23,7 @@ h1 {
   height: 150px;
 }
 
-.evenements {
+.events {
   display: flex;
   align-items: center;
   text-align: center;
@@ -45,25 +45,25 @@ h1 {
   padding: 0;
 }
 
-#heure {
+#hour {
   font-size: 65px;
   margin: 0;
   padding: 0;
 }
 
-#zone_meteo {
+#zone_temperature {
   margin: 0;
   font-size: 55px;
   /* font-weight: bold; */
 }
 
-#ville {
+#city {
   margin: 0;
   font-size: 35px;
   text-align: center;
 }
 
-#icone {
+#icon {
   width: 90px;
   height: 70px;
 }
@@ -142,11 +142,12 @@ li {
 li {
   font-family: "Oxygen", sans-serif;
   font-size: 22px;
-  line-height: 40px;              
+  line-height: 40px;
 }
 
 #next,
-#previous, button {
+#previous,
+button {
   margin: 0 auto;
   display: none;
 }
