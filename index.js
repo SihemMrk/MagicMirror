@@ -6,6 +6,9 @@ const { app, BrowserWindow } = require("electron");
 const { ipcMain } = require("electron");
 const os = require("os");
 
+var comm;
+var commBis;
+
 function createWindow() {
   // Cree la fenetre du navigateur.
   let win = new BrowserWindow({
@@ -111,7 +114,7 @@ function listEvents(auth) {
     }
   );
 }
-var comm;
+
 ipcMain.on("give-me-data", (event, arg) => {
   comm = event;
   fs.readFile("credentials.json", (err, content) => {
@@ -128,7 +131,7 @@ function musicsList() {
     commBis.reply("music-data", items);
   });
 }
-var commBis;
+
 ipcMain.on("wait-for-data", (event, arg) => {
   commBis = event;
   musicsList();
