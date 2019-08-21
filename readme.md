@@ -5,7 +5,6 @@ With Magic Mirror you will also be able to list you playlist music from your mir
 
 ## Dependencies
 
-- Node.js
 - Electron
 - Google Calendar API
 - Rpi-gpio
@@ -13,4 +12,5 @@ With Magic Mirror you will also be able to list you playlist music from your mir
 
 ## Getting started
 
-`npm start`
+`npm install` : it will install all modules listed as dependencies in package.json.
+`npm start` : it will 'start' the app.
