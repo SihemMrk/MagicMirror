@@ -12,12 +12,10 @@ With Magic Mirror you will also be able to list you playlist music from your mir
 
 ## Getting started
 
-`npm install` It will install all modules listed as dependencies in package.json.
-
+`npm install` It will install all modules listed as dependencies in package.json.  
 `npm start` It will 'start' the app.
 
 ## Code organisation
 
-In index.js : code executed by electron.
-
+In index.js file : code executed by electron.  
 In myInterface.js : UI code.
