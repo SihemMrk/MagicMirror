@@ -1,11 +1,11 @@
 const { ipcRenderer } = require("electron");
-const gpio = require("rpi-gpio");
-const rpi_gpio_buttons = require("rpi-gpio-buttons");
-const MAIN_BUTTON = 17;
-const button = rpi_gpio_buttons([MAIN_BUTTON], {
-  mode: rpi_gpio_buttons.MODE_BCM
-});
 const os = require("os");
+
+if (os.platform() == "linux") {
+  const MAIN_BUTTON = 17;
+  const gpio = require("rpi-gpio");
+  const rpi_gpio_buttons = require("rpi-gpio-buttons");
+}
 
 const days = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
 
@@ -33,7 +33,7 @@ var show = false;
 function checkPlatform() {
   var nodeListButton = document.getElementsByTagName("button").length;
 
-  if (os.platform() === "darwin") {
+  if (os.platform() !== "linux") {
     for (var i = 0; i < nodeListButton; i++) {
       document.getElementsByTagName("button")[i].style.display = "block";
     }
@@ -50,15 +50,12 @@ function timeFunc() {
   if (minutes < 10) {
     minutes = "0" + minutes;
   }
-  var time = "";
-  time += hours + ":" + minutes;
+  var time = hours + ":" + minutes;
   var day = days[today.getDay()];
   var date = today.getDate();
-  var minutes = today.getMinutes();
   var month = months[today.getMonth()];
   var year = today.getFullYear();
-  var now = "";
-  now += day + " " + date + " " + month + " " + year;
+  var now = day + " " + date + " " + month + " " + year;
   document.getElementById("hour").innerHTML = time;
   document.getElementById("date").innerHTML = now;
   setTimeout(timeFunc, 60000);
@@ -70,6 +67,7 @@ function wheather() {
   fetch(url).then(function(response) {
     response.json().then(callBackGetSuccess);
   });
+  setTimeout(wheather, 900000);
 }
 
 function callBackGetSuccess(data) {
@@ -118,7 +116,6 @@ ipcRenderer.on("agenda-data-ready", (event, events) => {
           "</li>"
         );
       } else {
-        var dateEvents = new Date(evenements.start.dateTime);
         return (
           "<li>" +
           "<span class='dateEvents'>" +
@@ -175,7 +172,7 @@ document.getElementById("playbutton").innerHTML = "play";
 
 var isPlaying = false;
 
-function PlayMusic() {
+function playMusic() {
   if (show === false) {
     return;
   }
@@ -184,6 +181,7 @@ function PlayMusic() {
     document.getElementById("audioPlayer").classList.add("pause");
   } else {
     audio.play();
+    document.getElementById("li_" + currentMusic).style.fontWeight = "bold";
     document.getElementById("audioPlayer").classList.remove("pause");
   }
 }
@@ -208,23 +206,21 @@ let observer = new IntersectionObserver(function(entries) {
   });
 });
 
-function NextMusic() {
+function nextMusic() {
   document.getElementById("li_" + currentMusic).style.fontWeight = "normal";
   currentMusic++;
-  document.getElementById("li_" + currentMusic).style.fontWeight = "bold";
   if (currentMusic === list.length) {
     currentMusic = 0;
   }
+  document.getElementById("li_" + currentMusic).style.fontWeight = "bold";
   if (
     document.getElementById("li_" + currentMusic).getAttribute("isVisible") ===
     "false"
   ) {
-    document.getElementById("list").scrollTop += 40;
+    document.getElementById("audioPlayer").scrollTop += 40;
   }
-  if (currentMusic === list.length - 1) {
-    document.getElementById("list").scrollTop = document.getElementById(
-      "list"
-    ).scrollHeight;
+  if (currentMusic === 0) {
+    document.getElementById("audioPlayer").scrollTop = 0;
   }
   audio.src = "musics/" + list[currentMusic];
 
@@ -233,32 +229,28 @@ function NextMusic() {
   document.getElementById("musicTitle").innerHTML = list[currentMusic];
 }
 
-function PreviousMusic() {
+function previousMusic() {
   document.getElementById("li_" + currentMusic).style.fontWeight = "normal";
   currentMusic--;
   if (currentMusic === -1) {
     currentMusic = list.length - 1;
   }
   document.getElementById("li_" + currentMusic).style.fontWeight = "bold";
-  console.log(document.getElementById("list").scrollHeight);
   if (
     document.getElementById("li_" + currentMusic).getAttribute("isVisible") ===
     "false"
   ) {
-    document.getElementById("list").scrollTop -= 40;
+    document.getElementById("audioPlayer").scrollTop -= 40;
   }
-  if (currentMusic === 0) {
-    document.getElementById("list").scrollTop = 0;
+  if (currentMusic === list.length - 1) {
+    document.getElementById("audioPlayer").scrollTop = document.getElementById(
+      "audioPlayer"
+    ).scrollHeight;
   }
   audio.src = "musics/" + list[currentMusic];
   audio.play();
   document.getElementById("musicTitle").innerHTML = list[currentMusic];
 }
-
-// function AdjustVolume() {
-//   var volume = document.getElementById("volume");
-//   audio.volume = volume.value;
-// }
 
 function changePage() {
   if (show) {
@@ -271,31 +263,46 @@ function changePage() {
   show = !show;
 }
 
-gpio.setMode(gpio.MODE_BCM);
+if (os.platform() == "linux") {
+  const button = rpi_gpio_buttons([MAIN_BUTTON], {
+    mode: rpi_gpio_buttons.MODE_BCM
+  });
 
-gpio.on("change", function(channel, value) {
-  console.log(channel + " " + value);
-  if (channel === 18 && value) {
-    if (audio.volume >= 0.1) {
-      audio.volume -= 0.1;
-    }
-  } else if (channel === 17 && value) {
-    PlayMusic();
-  } else if (channel === 27 && value) {
-    NextMusic();
-  } else if (channel === 22 && value) {
-    PreviousMusic();
-  } else if (channel === 23 && value) {
-    if (audio.volume <= 0.9) {
-      audio.volume += 0.1;
-    }
-  }
-});
+  gpio.setMode(gpio.MODE_BCM);
 
-button.on("double_clicked", function(pin) {
-  console.log("doubleeee", pin);
-  changePage();
-});
+  gpio.on("change", function(channel, value) {
+    console.log(channel + " " + value);
+    if (channel === 18 && value) {
+      if (audio.volume >= 0.1) {
+        audio.volume -= 0.1;
+      }
+    } else if (channel === 17 && value) {
+      playMusic();
+    } else if (channel === 27 && value) {
+      nextMusic();
+    } else if (channel === 22 && value) {
+      previousMusic();
+    } else if (channel === 23 && value) {
+      if (audio.volume <= 0.9) {
+        audio.volume += 0.1;
+      }
+    }
+  });
+
+  button.on("double_clicked", function(pin) {
+    changePage();
+  });
+
+  gpio.setup(18, gpio.DIR_IN, gpio.EDGE_BOTH);
+
+  gpio.setup(17, gpio.DIR_IN, gpio.EDGE_BOTH);
+
+  gpio.setup(27, gpio.DIR_IN, gpio.EDGE_BOTH);
+
+  gpio.setup(22, gpio.DIR_IN, gpio.EDGE_BOTH);
+
+  gpio.setup(23, gpio.DIR_IN, gpio.EDGE_BOTH);
+}
 
 checkPlatform();
 
@@ -303,16 +310,4 @@ timeFunc();
 
 wheather();
 
-setTimeout(wheather, 900000);
-
 refreshAgenda();
-
-gpio.setup(18, gpio.DIR_IN, gpio.EDGE_BOTH);
-
-gpio.setup(17, gpio.DIR_IN, gpio.EDGE_BOTH);
-
-gpio.setup(27, gpio.DIR_IN, gpio.EDGE_BOTH);
-
-gpio.setup(22, gpio.DIR_IN, gpio.EDGE_BOTH);
-
-gpio.setup(23, gpio.DIR_IN, gpio.EDGE_BOTH);
