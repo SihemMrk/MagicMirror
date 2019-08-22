@@ -194,7 +194,7 @@ audio.onpause = function() {
   document.getElementById("playbutton").innerHTML = "play";
 };
 
-audio.onended = NextMusic;
+audio.onended = nextMusic;
 
 let observer = new IntersectionObserver(function(entries) {
   entries.forEach(function(entry) {

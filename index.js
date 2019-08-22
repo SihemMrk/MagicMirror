@@ -11,16 +11,22 @@ var commBis;
 
 function createWindow() {
   // Cree la fenetre du navigateur.
+  var fs = true;
+  if (os.platform() !== "linux") {
+    fs = false;
+  }
   let win = new BrowserWindow({
     width: 800,
     height: 600,
     closable: true,
-    // fullscreen: true,
+    fullscreen: fs,
     webPreferences: {
       nodeIntegration: true
     }
   });
-  win.webContents.openDevTools();
+  if (os.platform() !== "linux") {
+    win.webContents.openDevTools();
+  }
 
   // and load the index.html of the app.
   win.loadFile("index.html");
