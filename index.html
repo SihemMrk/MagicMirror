@@ -43,17 +43,16 @@
     <div id="audioPlayer">
       <div id="musicTitle"></div>
       <audio id="audio"></audio>
-      <button id="previous" onclick="PreviousMusic()">Previous</button>
-      <button id="playbutton" onclick="PlayMusic()"></button>
-      <button id="next" onclick="NextMusic()">Next</button>
-
+      <button id="previous" onclick="previousMusic()">Previous</button>
+      <button id="playbutton" onclick="playMusic()"></button>
+      <button id="next" onclick="nextMusic()">Next</button>
       <input
         id="volume"
         type="range"
         min="0"
         max="1"
         step="0.01"
-        onchange="AdjustVolume()"
+        onchange="adjustVolume()"
         display="none"
       />
 
