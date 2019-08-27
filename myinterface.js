@@ -1,12 +1,6 @@
 const { ipcRenderer } = require("electron");
 const os = require("os");
 
-if (os.platform() == "linux") {
-  const MAIN_BUTTON = 17;
-  const gpio = require("rpi-gpio");
-  const rpi_gpio_buttons = require("rpi-gpio-buttons");
-}
-
 const days = ["Dim.", "Lun.", "Mar.", "Mer.", "Jeu.", "Ven.", "Sam."];
 
 const months = [
@@ -263,7 +257,10 @@ function changePage() {
   show = !show;
 }
 
-if (os.platform() == "linux") {
+if (os.platform() === "linux") {
+  const MAIN_BUTTON = 17;
+  const gpio = require("rpi-gpio");
+  const rpi_gpio_buttons = require("rpi-gpio-buttons");
   const button = rpi_gpio_buttons([MAIN_BUTTON], {
     mode: rpi_gpio_buttons.MODE_BCM
   });
