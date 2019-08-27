@@ -24,7 +24,7 @@ function createWindow() {
       nodeIntegration: true
     }
   });
-  if (os.platform() !== "linux") {
+  if (os.platform() === "linux") {
     win.webContents.openDevTools();
   }
 
